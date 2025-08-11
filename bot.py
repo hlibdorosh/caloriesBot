@@ -13,6 +13,9 @@ from telegram import ReplyKeyboardMarkup
 from telegram.ext import ConversationHandler
 from meal_analysis import get_meal_conv_handler
 
+from datetime import date, timedelta
+from db import SessionLocal, Parameters, DailyLog
+
 
 from parameter_handlers import (
     start_height, set_height,
@@ -36,10 +39,66 @@ ASK_GPT = 5
 ASK_MEAL_DESCRIPTION = 10
 
 
+######################/ commands##############################
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    help_text = (
+        "🆘 <b>Справка</b>\n\n"
+        "<b>Доступные команды и действия:</b>\n"
+        "/start – запустить бота и открыть главное меню\n"
+        "/help – показать эту справку\n\n"
+        "📋 Также можно использовать кнопки:\n"
+        "• Установить рост, вес, возраст, пол и цель\n"
+        "• Спросить GPT – задать любой вопрос\n"
+        "• Добавить приём пищи – бот рассчитает БЖУ и калории\n\n"
+        "ℹ️ После каждого добавленного приёма пищи бот считает, сколько вы уже съели за день."
+    )
+    await update.message.reply_text(help_text, parse_mode="HTML")
+
+
+async def show_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    telegram_id = update.message.from_user.id
+    session = SessionLocal()
+    try:
+        # текущий пользователь
+        user = session.query(Parameters).filter_by(telegram_id=telegram_id).first()
+        if not user:
+            await update.message.reply_text("📭 Данные о вас не найдены. Сначала задайте параметры.")
+            return
+
+        today = date.today()
+        consumed = user.consumed_today or 0
+        advised = user.daily_calories or 0
+
+        # история за последние 7 дней (без сегодняшнего)
+        history = (
+            session.query(DailyLog)
+            .filter(DailyLog.telegram_id == telegram_id, DailyLog.date < today)
+            .order_by(DailyLog.date.desc())
+            .limit(7)
+            .all()
+        )
+
+        msg = [f"📊 *Статистика питания*\n",
+               f"Сегодня ({today}): {consumed} / {advised} ккал\n"]
+
+        if history:
+            msg.append("\n🗓 История:")
+            for h in history:
+                msg.append(f"{h.date}: {h.consumed_calories} / {h.advised_calories} ккал")
+
+        await update.message.reply_text("\n".join(msg), parse_mode="Markdown")
+    finally:
+        session.close()
 
 
 
-# OpenAI call
+
+
+
+
+
+
+########################## OpenAI call #######################
 async def chat_with_openai(message):
     try:
         client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -76,19 +135,23 @@ async def handle_gpt_question(update: Update, context: ContextTypes.DEFAULT_TYPE
             f"- Возраст: {user.age} лет\n"
             f"- Пол: {user.sex}\n"
             f"- Цель: {user.goal}\n\n"
+            f"- Калории в день: {user.daily_calories} ккал\n\n"
+            f"- Потребление сегодня: {user.consumed_today} ккал\n\n"
         )
 
     # Отправка сообщения в GPT
     full_prompt = user_context + "Вопрос пользователя:\n" + user_input
+    await update.message.reply_text("⏳ Ваш диетолог обрабатывает информацию...")
+
     response = await chat_with_openai(full_prompt)
 
     await update.message.reply_text(response)
 
     # Главное меню снова
     keyboard = [
-        ["Установить рост", "Установить вес"],
-        ["Установить возраст", "Установить пол"],
-        ["Установить цель", "Спросить GPT"], ["Добавить приём пищи"]
+        ["⬆️ Установить рост", "⚖ Установить вес"],
+        ["📅 Установить возраст", "🚻 Установить пол"],
+        ["🎯 Установить цель", "🤖 Спросить GPT"], ["🍽 Добавить приём пищи"]
     ]
     markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     await update.message.reply_text("Выберите действие:", reply_markup=markup)
@@ -100,9 +163,9 @@ async def handle_gpt_question(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        ["Установить рост", "Установить вес"],
-        ["Установить возраст", "Установить пол"],
-        ["Установить цель", "Спросить GPT"], ["Добавить приём пищи"]
+        ["⬆️ Установить рост", "⚖ Установить вес"],
+        ["📅 Установить возраст", "🚻 Установить пол"],
+        ["🎯 Установить цель", "🤖 Спросить GPT"], ["🍽 Добавить приём пищи"]
     ]
     markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     await update.message.reply_text("Выберите параметр для установки:", reply_markup=markup)
@@ -164,7 +227,8 @@ def main():
     app.add_handler(goal_conv)
     app.add_handler(gpt_conv)
     app.add_handler(get_meal_conv_handler())
-
+    app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CommandHandler("stats", show_stats))
 
     app.run_polling()
 
