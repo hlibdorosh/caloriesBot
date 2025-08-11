@@ -39,8 +39,7 @@ async def handle_meal_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     prompt = (
         "Проанализируй следующий приём пищи и оцени содержание БЖУ и калорий.\n"
         "❗️Ответ строго без пояснений, без промежуточных расчётов, только результат.\n"
-        "❗️Только 4 строки в следующем формате:\n"
-        "❗️Никаких комментариев, пояснений, расчетов — только результат в формате ниже:\n"
+        "❗️Только 4 строки в формате:\n"
         "Белки: __ г\nЖиры: __ г\nУглеводы: __ г\nКалории: __ ккал\n\n"
         f"Приём пищи: {user_input}"
     )
@@ -48,32 +47,21 @@ async def handle_meal_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await update.message.reply_text("⏳ Ваш диетолог обрабатывает информацию...")
 
-        gpt_answer = await chat_with_openai(prompt)
-        # после получения gpt_answer
+        # один вызов GPT
         gpt_answer = await chat_with_openai(prompt)
         await update.message.reply_text(gpt_answer)
 
-        # ⬇️ Сохраняем калории
+        # извлекаем калории
         calories = extract_calories(gpt_answer)
+
+        # прибавляем РОВНО ОДИН РАЗ — через утилиту с переносом по дням
         telegram_id = update.message.from_user.id
         add_calories_with_rollover(telegram_id, calories)
 
-        session = SessionLocal()
-        user = session.query(Parameters).filter_by(telegram_id=telegram_id).first()
-        if user:
-            if user.consumed_today is None:
-                user.consumed_today = 0
-            user.consumed_today += calories
-            session.commit()
-        session.close()
-
     except Exception as e:
         await update.message.reply_text(f"❌ Ошибка анализа: {e}")
 
-    except Exception as e:
-        await update.message.reply_text(f"❌ Ошибка анализа: {e}")
-
-    # Главное меню
+    # главное меню
     keyboard = [
         ["⬆️ Установить рост", "⚖ Установить вес"],
         ["📅 Установить возраст", "🚻 Установить пол"],

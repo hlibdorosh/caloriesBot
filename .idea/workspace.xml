@@ -5,15 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="094ba676-5344-46cd-a50d-f8098f275562" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/db.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/meal_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/meal_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openai_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/openai_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/parameter_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/parameter_handlers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +62,7 @@
       <option name="presentableId" value="Default" />
       <updated>1754577950843</updated>
       <workItem from="1754577952229" duration="18646000" />
-      <workItem from="1754900881449" duration="2280000" />
+      <workItem from="1754900881449" duration="3755000" />
     </task>
     <servers />
   </component>
