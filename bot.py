@@ -17,6 +17,10 @@ from datetime import date, timedelta
 from db import SessionLocal, Parameters, DailyLog
 
 
+load_dotenv()
+
+TELEGRAM_API_KEY = os.getenv("TELEGRAM_API_KEY")
+
 from parameter_handlers import (
     start_height, set_height,
     start_weight, set_weight,
@@ -33,7 +37,6 @@ from parameter_handlers import (
 load_dotenv()
 
 # Set API keys
-TELEGRAM_API_KEY = "7982223515:AAGARuDAQ6bx18VjelrTKn4pgCgK6fjxhVE"
 HEIGHT, WEIGHT, AGE, SEX, GOAL = range(5)
 ASK_GPT = 5
 ASK_MEAL_DESCRIPTION = 10
