@@ -91,7 +91,3 @@ calories/
 
 ---
 
-## 📝 License
-
-MIT
-
