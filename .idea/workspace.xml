@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="094ba676-5344-46cd-a50d-f8098f275562" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/meal_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/meal_analysis.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +34,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -63,6 +62,10 @@
       <updated>1754577950843</updated>
       <workItem from="1754577952229" duration="18646000" />
       <workItem from="1754900881449" duration="3755000" />
+      <workItem from="1755776329827" duration="334000" />
+      <workItem from="1755777841789" duration="7000" />
+      <workItem from="1755778311971" duration="615000" />
+      <workItem from="1755810681710" duration="21000" />
     </task>
     <servers />
   </component>
